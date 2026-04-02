@@ -110,20 +110,6 @@ newDomainInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addDomain();
 });
 
-const bypassBtn = document.getElementById("bypassBtn");
-const bypassHint = document.getElementById("bypassHint");
-
-bypassBtn.addEventListener("click", () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs[0]?.id) return;
-    chrome.tabs.sendMessage(tabs[0].id, { action: "bypass-next-paste" });
-    bypassBtn.textContent = "✅ 已就绪";
-    bypassBtn.classList.add("done");
-    bypassHint.textContent = "请回到页面按 Cmd+V 粘贴";
-    setTimeout(() => window.close(), 1200);
-  });
-});
-
 chrome.storage.sync.get({ enabled: true, domains: DEFAULT_DOMAINS }, (s) => {
   globalToggle.checked = s.enabled;
   domains = [...s.domains];

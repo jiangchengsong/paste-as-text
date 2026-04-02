@@ -17,7 +17,6 @@
   let enabled = true;
   let activeDomains = new Set(DEFAULT_DOMAINS);
   let bypassNext = false;
-  let bypassTimer = null;
 
   function loadSettings() {
     chrome.storage.sync.get({ enabled: true, domains: DEFAULT_DOMAINS }, (s) => {
@@ -67,31 +66,61 @@
     clearTimeout(el._t);
     el._t = setTimeout(() => {
       el.style.opacity = "0";
-    }, 2500);
+    }, 2200);
   }
 
-  chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.action !== "bypass-next-paste") return;
+  /**
+   * Cmd+Option+V：用 Clipboard API 读图片，再派发合成 paste，走「原样粘贴」。
+   * 仅在扩展开启且当前域在白名单时处理（与 Cmd+V 纯文本逻辑一致）。
+   */
+  document.addEventListener(
+    "keydown",
+    async (e) => {
+      if (!(e.metaKey && e.altKey && e.code === "KeyV")) return;
+      if (!enabled || !isDomainActive()) return;
 
-    bypassNext = true;
-    showToast("✅ 已就绪，现在按 Cmd+V 粘贴原始内容（含图片）");
+      e.preventDefault();
+      e.stopPropagation();
 
-    clearTimeout(bypassTimer);
-    bypassTimer = setTimeout(() => {
-      if (bypassNext) {
-        bypassNext = false;
-        showToast("⏱️ 已超时，恢复纯文本粘贴");
+      try {
+        const items = await navigator.clipboard.read();
+
+        for (const item of items) {
+          const imageType = item.types.find((t) => t.startsWith("image/"));
+          if (!imageType) continue;
+
+          const blob = await item.getType(imageType);
+          const file = new File([blob], "pasted-image.png", { type: imageType });
+          const dt = new DataTransfer();
+          dt.items.add(file);
+
+          bypassNext = true;
+          const target = document.activeElement || document;
+          target.dispatchEvent(
+            new ClipboardEvent("paste", {
+              clipboardData: dt,
+              bubbles: true,
+              cancelable: true,
+            })
+          );
+          showToast("🖼️ 已按 Cmd+Option+V 粘贴原始内容");
+          return;
+        }
+
+        showToast("剪贴板中未找到图片，请确认已从 Office 等处复制");
+      } catch (err) {
+        console.warn("PasteAsText: clipboard.read 失败", err);
+        showToast("无法读取剪贴板：请在地址栏允许剪贴板权限，或重载扩展");
       }
-    }, 15000);
-  });
+    },
+    true
+  );
 
   document.addEventListener(
     "paste",
     (e) => {
       if (bypassNext) {
         bypassNext = false;
-        clearTimeout(bypassTimer);
-        showToast("🖼️ 已粘贴原始内容");
         return;
       }
 
