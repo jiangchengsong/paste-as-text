@@ -1,5 +1,7 @@
 # PasteAsText（粘贴为纯文本）
 
+**仓库：** [github.com/jiangchengsong/paste-as-text](https://github.com/jiangchengsong/paste-as-text)
+
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
