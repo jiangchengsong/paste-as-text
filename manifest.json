@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "PasteAsText - 粘贴为纯文本",
+  "description": "在 ChatGPT、Gemini 等网站粘贴时，自动将 Office 复制的内容转为纯文本，避免粘贴成图片",
+  "version": "1.0.0",
+  "permissions": ["storage", "activeTab", "contextMenus"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PasteAsText - 粘贴为纯文本"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,9 @@
+.DS_Store
+*.zip
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*~

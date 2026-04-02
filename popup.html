@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>✂️ 粘贴为纯文本</h1>
+      <p class="subtitle">Office → 网页粘贴自动转文字</p>
+    </header>
+
+    <div class="toggle-row main-toggle">
+      <span>全局开关</span>
+      <label class="switch">
+        <input type="checkbox" id="globalToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">检测中...</span>
+    </div>
+
+    <div class="section">
+      <h2>启用的网站</h2>
+      <ul id="domainList"></ul>
+    </div>
+
+    <div class="add-domain">
+      <input type="text" id="newDomain" placeholder="输入域名，如 example.com">
+      <button id="addBtn">添加</button>
+    </div>
+
+    <button type="button" class="bypass-btn" id="bypassBtn">🖼️ 下次粘贴保留图片</button>
+    <p class="bypass-hint" id="bypassHint"></p>
+
+    <footer>
+      <strong>Cmd+V</strong> 自动粘贴纯文本<br>
+      点击上方按钮或右键菜单 → 再 <strong>Cmd+V</strong> 可粘贴图片
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
